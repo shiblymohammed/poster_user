@@ -1,0 +1,83 @@
+VERCEL DEPLOYMENT CHECKLIST - USER SITE
+========================================
+
+PRE-DEPLOYMENT
+--------------
+[ ] Backend deployed on Render
+[ ] Backend URL ready
+[ ] GitHub account ready
+[ ] Vercel account created
+
+CODE PREPARATION
+----------------
+[ ] All API URLs use environment variables
+[ ] .env.example created
+[ ] .gitignore configured
+[ ] vercel.json created
+
+GITHUB SETUP
+------------
+[ ] Create repository: lapoaitools-user-site
+[ ] Push code to GitHub:
+    cd user-site
+    git init
+    git add .
+    git commit -m "Initial commit"
+    git branch -M main
+    git remote add origin https://github.com/YOUR_USERNAME/lapoaitools-user-site.git
+    git push -u origin main
+
+VERCEL DEPLOYMENT
+-----------------
+[ ] Import GitHub repository
+[ ] Framework: Vite
+[ ] Build Command: npm run build
+[ ] Output Directory: dist
+[ ] Environment Variable added:
+    [ ] VITE_API_URL = https://your-backend.onrender.com
+
+BACKEND CORS UPDATE
+-------------------
+[ ] Go to Render → Backend → Environment
+[ ] Update CORS_ALLOWED_ORIGINS:
+    [ ] Add: https://your-app.vercel.app
+[ ] Save and redeploy backend
+
+VERIFICATION
+------------
+[ ] Build completed successfully
+[ ] Site accessible at Vercel URL
+[ ] Home page loads
+[ ] Campaign page loads
+[ ] Image upload works
+[ ] Image generation works
+[ ] No console errors
+
+POST-DEPLOYMENT
+---------------
+[ ] Test on mobile device
+[ ] Test on different browsers
+[ ] Verify all features work
+[ ] Check performance
+[ ] Monitor for errors
+
+OPTIONAL
+--------
+[ ] Add custom domain
+[ ] Update backend CORS with custom domain
+[ ] Set up analytics
+[ ] Enable Web Vitals monitoring
+
+NOTES
+-----
+- Auto-deploys on git push to main
+- Preview deployments for all branches
+- Free tier includes 100GB bandwidth
+- HTTPS enabled automatically
+- Global CDN for fast loading
+
+URLS TO SAVE
+------------
+Production: https://your-app.vercel.app
+Backend API: https://your-backend.onrender.com
+GitHub Repo: https://github.com/YOUR_USERNAME/lapoaitools-user-site

@@ -1,0 +1,162 @@
+VERCEL DEPLOYMENT GUIDE - USER SITE
+====================================
+
+PREREQUISITES
+-------------
+1. GitHub account
+2. Vercel account (https://vercel.com)
+3. Backend deployed on Render (get the URL)
+
+STEP 1: CREATE GITHUB REPOSITORY
+---------------------------------
+1. Create new repository: lapoaitools-user-site
+2. Initialize and push code:
+
+   cd user-site
+   git init
+   git add .
+   git commit -m "Initial commit"
+   git branch -M main
+   git remote add origin https://github.com/YOUR_USERNAME/lapoaitools-user-site.git
+   git push -u origin main
+
+STEP 2: DEPLOY TO VERCEL
+-------------------------
+1. Go to https://vercel.com/dashboard
+2. Click "Add New..." → "Project"
+3. Import your GitHub repository
+4. Configure:
+
+   Framework Preset: Vite
+   Root Directory: ./
+   Build Command: npm run build
+   Output Directory: dist
+   Install Command: npm install
+
+5. Add Environment Variable:
+   Name: VITE_API_URL
+   Value: https://your-backend.onrender.com
+   (Use your actual Render backend URL)
+
+6. Click "Deploy"
+
+STEP 3: UPDATE BACKEND CORS
+----------------------------
+After deployment, update your backend on Render:
+
+1. Go to Render Dashboard → Your Backend Service
+2. Environment → Edit CORS_ALLOWED_ORIGINS
+3. Add your Vercel URL:
+   https://your-app.vercel.app,https://your-custom-domain.com
+
+4. Save and redeploy backend
+
+STEP 4: VERIFY DEPLOYMENT
+--------------------------
+1. Visit your Vercel URL
+2. Test campaign page
+3. Test image upload
+4. Test image generation
+5. Check browser console for errors
+
+STEP 5: CUSTOM DOMAIN (Optional)
+---------------------------------
+1. In Vercel Dashboard → Settings → Domains
+2. Add your custom domain
+3. Update DNS records as instructed
+4. Update backend CORS_ALLOWED_ORIGINS
+
+ENVIRONMENT VARIABLES
+---------------------
+Required in Vercel:
+- VITE_API_URL = https://your-backend.onrender.com
+
+VERCEL CONFIGURATION
+--------------------
+vercel.json handles:
+- SPA routing (all routes → index.html)
+- Security headers
+- CORS headers
+
+BUILD SETTINGS
+--------------
+Framework: Vite
+Build Command: npm run build
+Output Directory: dist
+Install Command: npm install
+Node Version: 18.x (auto-detected)
+
+TROUBLESHOOTING
+---------------
+Issue: API calls fail
+Fix: Check VITE_API_URL is correct and backend is running
+
+Issue: CORS errors
+Fix: Add Vercel URL to backend CORS_ALLOWED_ORIGINS
+
+Issue: 404 on refresh
+Fix: vercel.json should handle this (already configured)
+
+Issue: Build fails
+Fix: Check all dependencies in package.json
+
+Issue: Images not loading
+Fix: Verify backend Cloudinary is configured
+
+UPDATING DEPLOYMENT
+-------------------
+1. Make changes to code
+2. Commit and push to GitHub:
+   git add .
+   git commit -m "Update message"
+   git push
+
+3. Vercel auto-deploys on push to main branch
+
+PREVIEW DEPLOYMENTS
+-------------------
+- Every push to any branch creates a preview
+- Preview URLs: https://your-app-git-branch.vercel.app
+- Production: main branch only
+
+MONITORING
+----------
+- Logs: Vercel Dashboard → Deployments → View Logs
+- Analytics: Vercel Dashboard → Analytics
+- Performance: Vercel Dashboard → Speed Insights
+
+COSTS
+-----
+Free Tier:
+- Unlimited deployments
+- 100GB bandwidth/month
+- Automatic HTTPS
+- Preview deployments
+- Perfect for this project
+
+SECURITY
+--------
+✓ HTTPS enabled automatically
+✓ Security headers configured
+✓ Environment variables encrypted
+✓ No API keys in code
+
+PERFORMANCE
+-----------
+✓ Global CDN
+✓ Automatic caching
+✓ Edge network
+✓ Fast builds (~1-2 minutes)
+
+NEXT STEPS
+----------
+1. Deploy admin-panel to Vercel
+2. Update backend CORS with both frontend URLs
+3. Test complete flow
+4. Set up custom domains (optional)
+
+SUPPORT
+-------
+Vercel: https://vercel.com/docs
+Vite: https://vitejs.dev/guide/
+React: https://react.dev/

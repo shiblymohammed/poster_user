@@ -1,0 +1,360 @@
+.image-editor-container {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.editor-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #333;
+  margin: 0 0 12px 0;
+  text-align: center;
+}
+
+.editor-subtitle {
+  font-size: 16px;
+  color: #666;
+  margin: 0 0 40px 0;
+  text-align: center;
+}
+
+/* Preview Display */
+.editor-preview {
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto 40px;
+  background: #f5f5f5;
+  border: 3px solid #e0e0e0;
+  border-radius: 16px;
+  overflow: hidden;
+  min-height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.editor-preview-image {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.editor-loading {
+  text-align: center;
+  padding: 40px;
+}
+
+.editor-loading .spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #667eea;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 20px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.editor-loading p {
+  color: #666;
+  font-size: 15px;
+  margin: 0;
+}
+
+/* Edit Controls */
+.editor-controls {
+  background: #f9f9f9;
+  border: 2px solid #e0e0e0;
+  border-radius: 16px;
+  padding: 30px;
+  margin-bottom: 30px;
+}
+
+.control-section {
+  margin-bottom: 24px;
+}
+
+.control-section:last-of-type {
+  margin-bottom: 0;
+}
+
+.control-label {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 16px 0;
+  text-align: center;
+}
+
+.control-buttons {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: center;
+}
+
+.control-btn {
+  flex: 1;
+  max-width: 150px;
+  padding: 14px 20px;
+  background: white;
+  color: #667eea;
+  border: 2px solid #667eea;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.control-btn:hover:not(:disabled) {
+  background: #667eea;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.control-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.control-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.control-btn.active {
+  background: #667eea;
+  color: white;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+.control-icon {
+  font-size: 24px;
+}
+
+.control-text {
+  font-size: 13px;
+}
+
+.rotation-indicator {
+  min-width: 70px;
+  padding: 12px 16px;
+  background: white;
+  border: 2px solid #e0e0e0;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  text-align: center;
+}
+
+/* Reset Button */
+.reset-btn {
+  width: 100%;
+  max-width: 250px;
+  padding: 12px 24px;
+  background: #fff3cd;
+  color: #856404;
+  border: 2px solid #ffeaa7;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  margin: 24px auto 0;
+  display: block;
+}
+
+.reset-btn:hover:not(:disabled) {
+  background: #ffeaa7;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 234, 167, 0.4);
+}
+
+.reset-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Action Buttons */
+.editor-actions {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+}
+
+.editor-cancel-btn,
+.editor-save-btn {
+  flex: 1;
+  max-width: 220px;
+  padding: 16px 32px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.editor-cancel-btn {
+  background: white;
+  color: #667eea;
+  border: 2px solid #667eea;
+}
+
+.editor-cancel-btn:hover:not(:disabled) {
+  background: #667eea;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.editor-save-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
+}
+
+.editor-save-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+}
+
+.editor-cancel-btn:active:not(:disabled),
+.editor-save-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.editor-cancel-btn:disabled,
+.editor-save-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.save-icon {
+  font-size: 20px;
+}
+
+.spinner-small {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top: 2px solid white;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .image-editor-container {
+    padding: 30px 16px;
+  }
+
+  .editor-title {
+    font-size: 26px;
+  }
+
+  .editor-subtitle {
+    font-size: 14px;
+  }
+
+  .editor-preview {
+    min-height: 300px;
+  }
+
+  .editor-controls {
+    padding: 24px;
+  }
+
+  .control-label {
+    font-size: 16px;
+  }
+
+  .control-buttons {
+    flex-wrap: wrap;
+  }
+
+  .control-btn {
+    max-width: 120px;
+    padding: 12px 16px;
+  }
+
+  .control-icon {
+    font-size: 20px;
+  }
+
+  .control-text {
+    font-size: 12px;
+  }
+
+  .editor-actions {
+    flex-direction: column;
+  }
+
+  .editor-cancel-btn,
+  .editor-save-btn {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .image-editor-container {
+    padding: 20px 12px;
+  }
+
+  .editor-title {
+    font-size: 22px;
+  }
+
+  .editor-controls {
+    padding: 20px;
+  }
+
+  .control-section {
+    margin-bottom: 20px;
+  }
+
+  .control-buttons {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .control-btn {
+    max-width: 100%;
+    flex-direction: row;
+    justify-content: center;
+  }
+
+  .rotation-indicator {
+    width: 100%;
+  }
+
+  .reset-btn {
+    max-width: 100%;
+  }
+
+  .editor-cancel-btn,
+  .editor-save-btn {
+    font-size: 15px;
+    padding: 14px 28px;
+  }
+}

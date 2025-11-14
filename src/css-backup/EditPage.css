@@ -1,0 +1,31 @@
+.edit-page-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.edit-page-container > div {
+  width: 100%;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+@media (max-width: 768px) {
+  .edit-page-container {
+    padding: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .edit-page-container {
+    padding: 12px;
+  }
+  
+  .edit-page-container > div {
+    border-radius: 16px;
+  }
+}

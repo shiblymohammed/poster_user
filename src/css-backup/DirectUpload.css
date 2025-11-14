@@ -1,0 +1,264 @@
+.direct-upload-container {
+  width: 100%;
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.upload-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #333;
+  margin: 0 0 12px 0;
+  text-align: center;
+}
+
+.upload-subtitle {
+  font-size: 16px;
+  color: #666;
+  margin: 0 0 40px 0;
+  text-align: center;
+}
+
+/* Selected Frame Display */
+.selected-frame-display {
+  background: #f9f9f9;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.selected-frame-label {
+  font-size: 14px;
+  color: #666;
+  margin: 0 0 12px 0;
+  font-weight: 500;
+}
+
+.selected-frame-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+.selected-frame-thumbnail {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+  border-radius: 8px;
+  border: 2px solid #e0e0e0;
+  background: white;
+}
+
+.selected-frame-name {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+
+/* Upload Area */
+.upload-area {
+  border: 3px dashed #ccc;
+  border-radius: 16px;
+  padding: 60px 40px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  background: #fafafa;
+  position: relative;
+}
+
+.upload-area:hover {
+  border-color: #667eea;
+  background: #f5f7ff;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(102, 126, 234, 0.1);
+}
+
+.upload-area.dragging {
+  border-color: #667eea;
+  background: #e8ecff;
+  border-style: solid;
+  box-shadow: 0 8px 24px rgba(102, 126, 234, 0.2);
+}
+
+.file-input-hidden {
+  display: none;
+}
+
+.upload-icon {
+  font-size: 64px;
+  margin-bottom: 20px;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.upload-prompt {
+  font-size: 24px;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 12px 0;
+}
+
+.upload-hint {
+  font-size: 16px;
+  color: #666;
+  margin: 0 0 16px 0;
+}
+
+.upload-formats {
+  font-size: 13px;
+  color: #999;
+  margin: 0;
+}
+
+/* Error Message */
+.upload-error {
+  background: #fee;
+  border: 2px solid #fcc;
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-top: 20px;
+  color: #c33;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: center;
+}
+
+.error-icon {
+  font-size: 20px;
+}
+
+/* Back Button */
+.upload-back-btn {
+  width: 100%;
+  max-width: 300px;
+  padding: 14px 28px;
+  background: white;
+  color: #667eea;
+  border: 2px solid #667eea;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  margin: 30px auto 0;
+  display: block;
+}
+
+.upload-back-btn:hover {
+  background: #667eea;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.upload-back-btn:active {
+  transform: translateY(0);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .direct-upload-container {
+    padding: 30px 16px;
+  }
+
+  .upload-title {
+    font-size: 26px;
+  }
+
+  .upload-subtitle {
+    font-size: 14px;
+  }
+
+  .selected-frame-display {
+    padding: 16px;
+  }
+
+  .selected-frame-thumbnail {
+    width: 50px;
+    height: 50px;
+  }
+
+  .selected-frame-name {
+    font-size: 16px;
+  }
+
+  .upload-area {
+    padding: 50px 30px;
+  }
+
+  .upload-icon {
+    font-size: 56px;
+  }
+
+  .upload-prompt {
+    font-size: 20px;
+  }
+
+  .upload-hint {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .direct-upload-container {
+    padding: 20px 12px;
+  }
+
+  .upload-title {
+    font-size: 22px;
+  }
+
+  .selected-frame-display {
+    padding: 14px;
+  }
+
+  .selected-frame-info {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .selected-frame-thumbnail {
+    width: 70px;
+    height: 70px;
+  }
+
+  .upload-area {
+    padding: 40px 20px;
+  }
+
+  .upload-icon {
+    font-size: 48px;
+  }
+
+  .upload-prompt {
+    font-size: 18px;
+  }
+
+  .upload-hint {
+    font-size: 13px;
+  }
+
+  .upload-formats {
+    font-size: 12px;
+  }
+
+  .upload-back-btn {
+    font-size: 15px;
+    padding: 12px 24px;
+  }
+}

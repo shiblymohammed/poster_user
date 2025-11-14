@@ -1,0 +1,434 @@
+@import "tailwindcss";
+
+@theme {
+  /* Professional Brand Colors */
+  --color-primary: #3b82f6;
+  --color-primary-dark: #2563eb;
+  --color-secondary: #8b5cf6;
+  --color-accent: #06b6d4;
+  
+  /* Background Colors - Clean and Professional */
+  --color-white: #ffffff;
+  --color-gray-50: #f9fafb;
+  --color-gray-100: #f3f4f6;
+  --color-gray-200: #e5e7eb;
+  --color-gray-800: #1f2937;
+  --color-gray-900: #111827;
+  --color-black: #000000;
+
+  /* Semantic Colors */
+  --color-success: #10b981;
+  --color-error: #ef4444;
+  --color-warning: #f59e0b;
+  --color-info: #06b6d4;
+
+  /* Neutral Palette */
+  --color-gray-50: oklch(0.98 0 0);
+  --color-gray-100: oklch(0.96 0 0);
+  --color-gray-200: oklch(0.92 0 0);
+  --color-gray-300: oklch(0.85 0 0);
+  --color-gray-400: oklch(0.70 0 0);
+  --color-gray-500: oklch(0.55 0 0);
+  --color-gray-600: oklch(0.45 0 0);
+  --color-gray-700: oklch(0.35 0 0);
+  --color-gray-800: oklch(0.25 0 0);
+  --color-gray-900: oklch(0.15 0 0);
+
+  /* Typography */
+  --font-display: 'Paytone One', system-ui, sans-serif;
+  --font-body: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-code: 'Google Sans Code', 'SF Mono', Consolas, monospace;
+
+  /* Font Sizes - Use --text-* prefix for Tailwind v4 */
+  --text-xs: 0.75rem;    /* 12px */
+  --text-sm: 0.875rem;   /* 14px */
+  --text-base: 1rem;     /* 16px */
+  --text-lg: 1.125rem;   /* 18px */
+  --text-xl: 1.25rem;    /* 20px */
+  --text-2xl: 1.5rem;    /* 24px */
+  --text-3xl: 1.875rem;  /* 30px */
+  --text-4xl: 2.25rem;   /* 36px */
+  --text-5xl: 3rem;      /* 48px */
+
+  /* Spacing Scale */
+  --spacing-1: 0.25rem;   /* 4px */
+  --spacing-2: 0.5rem;    /* 8px */
+  --spacing-3: 0.75rem;   /* 12px */
+  --spacing-4: 1rem;      /* 16px */
+  --spacing-5: 1.25rem;   /* 20px */
+  --spacing-6: 1.5rem;    /* 24px */
+  --spacing-8: 2rem;      /* 32px */
+  --spacing-10: 2.5rem;   /* 40px */
+  --spacing-12: 3rem;     /* 48px */
+  --spacing-16: 4rem;     /* 64px */
+
+  /* Border Radius */
+  --radius-sm: 0.5rem;    /* 8px */
+  --radius-md: 0.75rem;   /* 12px */
+  --radius-lg: 1rem;      /* 16px */
+  --radius-xl: 1.5rem;    /* 24px */
+  --radius-2xl: 2rem;     /* 32px */
+  --radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-sm: 0 2px 4px 0 rgb(0 0 0 / 0.06);
+  --shadow-md: 0 4px 8px 0 rgb(0 0 0 / 0.08);
+  --shadow-lg: 0 8px 16px 0 rgb(0 0 0 / 0.10);
+  --shadow-xl: 0 16px 32px 0 rgb(0 0 0 / 0.12);
+  --shadow-2xl: 0 24px 48px 0 rgb(0 0 0 / 0.15);
+
+  /* Transitions */
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 500ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Z-Index Layers */
+  --z-base: 0;
+  --z-dropdown: 1000;
+  --z-sticky: 1100;
+  --z-fixed: 1200;
+  --z-modal-backdrop: 1300;
+  --z-modal: 1400;
+  --z-popover: 1500;
+  --z-tooltip: 1600;
+}
+
+/* Custom Utilities */
+@layer utilities {
+
+  /* Safe Area Support */
+  .pb-safe {
+    padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
+  }
+
+  .pt-safe {
+    padding-top: max(1rem, env(safe-area-inset-top));
+  }
+
+  .pl-safe {
+    padding-left: max(1rem, env(safe-area-inset-left));
+  }
+
+  .pr-safe {
+    padding-right: max(1rem, env(safe-area-inset-right));
+  }
+
+  /* Dynamic Viewport Height */
+  .min-h-screen-mobile {
+    min-height: 100dvh;
+  }
+
+  /* Subtle Glow Effects */
+  .glow-cyan {
+    box-shadow: 0 0 20px rgba(6, 182, 212, 0.3), 0 0 40px rgba(6, 182, 212, 0.1);
+  }
+
+  .glow-magenta {
+    box-shadow: 0 0 20px rgba(217, 70, 239, 0.3), 0 0 40px rgba(217, 70, 239, 0.1);
+  }
+
+  .glow-purple {
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.3), 0 0 40px rgba(139, 92, 246, 0.1);
+  }
+
+  .glow-green {
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.3), 0 0 40px rgba(16, 185, 129, 0.1);
+  }
+
+  .text-glow-cyan {
+    text-shadow: 0 0 20px rgba(6, 182, 212, 0.5);
+  }
+
+  .text-glow-magenta {
+    text-shadow: 0 0 20px rgba(217, 70, 239, 0.5);
+  }
+
+  .neon-border-cyan {
+    border: 1px solid var(--color-neon-cyan);
+    box-shadow: 0 0 10px rgba(6, 182, 212, 0.2);
+  }
+
+  .neon-border-magenta {
+    border: 1px solid var(--color-neon-magenta);
+    box-shadow: 0 0 10px rgba(217, 70, 239, 0.2);
+  }
+
+  .neon-border-purple {
+    border: 1px solid var(--color-neon-purple);
+    box-shadow: 0 0 10px rgba(139, 92, 246, 0.2);
+  }
+
+  .gradient-text-neon {
+    background: linear-gradient(135deg, var(--color-neon-cyan), var(--color-neon-purple), var(--color-neon-magenta));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    background-size: 200% auto;
+    animation: gradient-flow 4s ease infinite;
+  }
+
+  @keyframes gradient-flow {
+    0%, 100% { background-position: 0% center; }
+    50% { background-position: 100% center; }
+  }
+
+  .hover-glow-cyan:hover {
+    box-shadow: 0 0 25px rgba(6, 182, 212, 0.4), 0 0 50px rgba(6, 182, 212, 0.2);
+    transform: translateY(-2px);
+    transition: all 0.3s ease;
+  }
+
+  .hover-glow-magenta:hover {
+    box-shadow: 0 0 25px rgba(217, 70, 239, 0.4), 0 0 50px rgba(217, 70, 239, 0.2);
+    transform: translateY(-2px);
+    transition: all 0.3s ease;
+  }
+
+  /* Backdrop Blur Glass Effect */
+  .backdrop-blur-glass {
+    backdrop-filter: blur(20px) saturate(180%);
+    background-color: rgba(255, 255, 255, 0.8);
+  }
+
+  .backdrop-blur-glass-dark {
+    backdrop-filter: blur(20px) saturate(180%);
+    background-color: rgba(0, 0, 0, 0.6);
+  }
+
+  /* Text Gradient */
+  .text-gradient {
+    background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Smooth Scrolling */
+  .scroll-smooth-mobile {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Hide Scrollbar */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Touch Feedback - Button Press Animation */
+  .touch-feedback {
+    transition: transform var(--transition-fast), opacity var(--transition-fast);
+  }
+
+  .touch-feedback:active {
+    transform: scale(0.95);
+  }
+
+  .touch-feedback:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* Gesture Support - Prevent default touch behaviors where needed */
+  .gesture-area {
+    touch-action: none;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  /* Allow pan gestures for cropper */
+  .gesture-pan {
+    touch-action: pan-x pan-y;
+  }
+
+  /* Prevent pull-to-refresh on specific elements */
+  .no-pull-refresh {
+    overscroll-behavior-y: contain;
+  }
+
+  /* Screen Reader Only - Visually hidden but accessible to screen readers */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+}
+
+/* Animation Keyframes */
+@keyframes slide-up {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slide-down {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes backdrop-fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+/* Animation Classes - Optimized for 60fps */
+.animate-slide-up {
+  animation: slide-up 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform, opacity;
+}
+
+.animate-fade-in {
+  animation: fade-in 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: opacity;
+}
+
+.animate-slide-down {
+  animation: slide-down 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform, opacity;
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 400ms cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform, opacity;
+}
+
+.animate-backdrop-fade {
+  animation: backdrop-fade-in 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: opacity;
+}
+
+/* Page Transition Classes */
+.page-transition {
+  animation: fade-in 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: opacity;
+}
+
+.bottom-sheet-transition {
+  transition: transform 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
+}
+
+/* Remove will-change after animation completes to free resources */
+.animate-slide-up,
+.animate-fade-in,
+.animate-slide-down,
+.animate-fade-in-up,
+.animate-backdrop-fade,
+.page-transition {
+  animation-fill-mode: forwards;
+}
+
+/* Reduced Motion Support - Respects user preferences */
+@media (prefers-reduced-motion: reduce) {
+
+  /* Disable decorative animations but keep functional transitions */
+  *,
+  *::before,
+  *::after {
+    /* Reduce animation duration to near-instant */
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+
+    /* Keep transitions but make them very fast for state changes */
+    transition-duration: 0.01ms !important;
+
+    /* Remove will-change to prevent unnecessary GPU usage */
+    will-change: auto !important;
+  }
+
+  /* Disable infinite animations completely */
+  .animate-spin,
+  .animate-pulse,
+  .animate-bounce {
+    animation: none !important;
+  }
+
+  /* Keep opacity changes for visibility but remove transforms */
+  .animate-slide-up,
+  .animate-slide-down,
+  .animate-fade-in-up {
+    animation: reduced-fade-in 0.01ms !important;
+  }
+
+  .animate-fade-in,
+  .animate-backdrop-fade {
+    animation: reduced-fade-in 0.01ms !important;
+  }
+
+  /* Disable touch feedback scale animation */
+  .touch-feedback:active {
+    transform: none !important;
+  }
+
+  /* Disable hover transforms */
+  *:hover {
+    transform: none !important;
+  }
+
+  /* Keep scroll behavior smooth for accessibility */
+  .scroll-smooth-mobile {
+    scroll-behavior: auto;
+  }
+
+  /* Simplified fade for reduced motion */
+  @keyframes reduced-fade-in {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
+}

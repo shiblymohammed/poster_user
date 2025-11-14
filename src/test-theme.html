@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Theme Test</title>
+  <style>
+    /* Test if CSS variables are defined */
+    .test-primary {
+      background-color: var(--color-primary);
+    }
+    .test-spacing {
+      padding: var(--spacing-4);
+    }
+    .test-radius {
+      border-radius: var(--radius-lg);
+    }
+    .test-shadow {
+      box-shadow: var(--shadow-xl);
+    }
+  </style>
+</head>
+<body>
+  <h1>Theme Configuration Test</h1>
+  <div class="test-primary test-spacing test-radius test-shadow">
+    If this has purple background, padding, rounded corners, and shadow, the theme is working!
+  </div>
+</body>
+</html>

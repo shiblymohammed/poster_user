@@ -1,0 +1,351 @@
+@import "tailwindcss";
+
+@theme {
+  /* Brand Colors - OKLCH for perceptual uniformity */
+  --color-primary: oklch(0.65 0.25 270);        /* Purple */
+  --color-primary-dark: oklch(0.55 0.25 270);   /* Dark Purple */
+  --color-secondary: oklch(0.55 0.25 290);      /* Deep Purple */
+  --color-accent: oklch(0.75 0.20 330);         /* Pink */
+  
+  /* Semantic Colors */
+  --color-success: oklch(0.65 0.20 150);        /* Green */
+  --color-error: oklch(0.60 0.25 25);           /* Red */
+  --color-warning: oklch(0.75 0.20 80);         /* Yellow */
+  --color-info: oklch(0.60 0.20 240);           /* Blue */
+  
+  /* Neutral Palette */
+  --color-gray-50: oklch(0.98 0 0);
+  --color-gray-100: oklch(0.96 0 0);
+  --color-gray-200: oklch(0.92 0 0);
+  --color-gray-300: oklch(0.85 0 0);
+  --color-gray-400: oklch(0.70 0 0);
+  --color-gray-500: oklch(0.55 0 0);
+  --color-gray-600: oklch(0.45 0 0);
+  --color-gray-700: oklch(0.35 0 0);
+  --color-gray-800: oklch(0.25 0 0);
+  --color-gray-900: oklch(0.15 0 0);
+  
+  /* Typography */
+  --font-display: 'Paytone One', system-ui, sans-serif;
+  --font-body: 'Charm', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-code: 'Google Sans Code', 'SF Mono', Consolas, monospace;
+  
+  /* Font Sizes - Mobile Optimized */
+  --font-size-xs: 0.75rem;    /* 12px */
+  --font-size-sm: 0.875rem;   /* 14px */
+  --font-size-base: 1rem;     /* 16px */
+  --font-size-lg: 1.125rem;   /* 18px */
+  --font-size-xl: 1.25rem;    /* 20px */
+  --font-size-2xl: 1.5rem;    /* 24px */
+  --font-size-3xl: 1.875rem;  /* 30px */
+  --font-size-4xl: 2.25rem;   /* 36px */
+  --font-size-5xl: 3rem;      /* 48px */
+  
+  /* Spacing Scale */
+  --spacing-1: 0.25rem;   /* 4px */
+  --spacing-2: 0.5rem;    /* 8px */
+  --spacing-3: 0.75rem;   /* 12px */
+  --spacing-4: 1rem;      /* 16px */
+  --spacing-5: 1.25rem;   /* 20px */
+  --spacing-6: 1.5rem;    /* 24px */
+  --spacing-8: 2rem;      /* 32px */
+  --spacing-10: 2.5rem;   /* 40px */
+  --spacing-12: 3rem;     /* 48px */
+  --spacing-16: 4rem;     /* 64px */
+  
+  /* Border Radius */
+  --radius-sm: 0.5rem;    /* 8px */
+  --radius-md: 0.75rem;   /* 12px */
+  --radius-lg: 1rem;      /* 16px */
+  --radius-xl: 1.5rem;    /* 24px */
+  --radius-2xl: 2rem;     /* 32px */
+  --radius-full: 9999px;
+  
+  /* Shadows */
+  --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-sm: 0 2px 4px 0 rgb(0 0 0 / 0.06);
+  --shadow-md: 0 4px 8px 0 rgb(0 0 0 / 0.08);
+  --shadow-lg: 0 8px 16px 0 rgb(0 0 0 / 0.10);
+  --shadow-xl: 0 16px 32px 0 rgb(0 0 0 / 0.12);
+  --shadow-2xl: 0 24px 48px 0 rgb(0 0 0 / 0.15);
+  
+  /* Transitions - iOS-inspired easing */
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 500ms cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* Z-Index Layers */
+  --z-base: 0;
+  --z-dropdown: 1000;
+  --z-sticky: 1100;
+  --z-fixed: 1200;
+  --z-modal-backdrop: 1300;
+  --z-modal: 1400;
+  --z-popover: 1500;
+  --z-tooltip: 1600;
+}
+
+/* Custom Utilities */
+@layer utilities {
+  /* Safe Area Support */
+  .pb-safe {
+    padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
+  }
+  
+  .pt-safe {
+    padding-top: max(1rem, env(safe-area-inset-top));
+  }
+  
+  .pl-safe {
+    padding-left: max(1rem, env(safe-area-inset-left));
+  }
+  
+  .pr-safe {
+    padding-right: max(1rem, env(safe-area-inset-right));
+  }
+  
+  /* Dynamic Viewport Height */
+  .min-h-screen-mobile {
+    min-height: 100dvh;
+  }
+  
+  /* Backdrop Blur Glass Effect */
+  .backdrop-blur-glass {
+    backdrop-filter: blur(20px) saturate(180%);
+    background-color: rgba(255, 255, 255, 0.8);
+  }
+  
+  .backdrop-blur-glass-dark {
+    backdrop-filter: blur(20px) saturate(180%);
+    background-color: rgba(0, 0, 0, 0.6);
+  }
+  
+  /* Text Gradient */
+  .text-gradient {
+    background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  /* Smooth Scrolling */
+  .scroll-smooth-mobile {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Hide Scrollbar */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  
+  /* Touch Feedback - Button Press Animation */
+  .touch-feedback {
+    transition: transform var(--transition-fast), opacity var(--transition-fast);
+  }
+  
+  .touch-feedback:active {
+    transform: scale(0.95);
+  }
+  
+  .touch-feedback:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  
+  /* Gesture Support - Prevent default touch behaviors where needed */
+  .gesture-area {
+    touch-action: none;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  
+  /* Allow pan gestures for cropper */
+  .gesture-pan {
+    touch-action: pan-x pan-y;
+  }
+  
+  /* Prevent pull-to-refresh on specific elements */
+  .no-pull-refresh {
+    overscroll-behavior-y: contain;
+  }
+  
+  /* Screen Reader Only - Visually hidden but accessible to screen readers */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+}
+
+/* Animation Keyframes */
+@keyframes slide-up {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slide-down {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes backdrop-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Animation Classes - Optimized for 60fps */
+.animate-slide-up {
+  animation: slide-up 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform, opacity;
+}
+
+.animate-fade-in {
+  animation: fade-in 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: opacity;
+}
+
+.animate-slide-down {
+  animation: slide-down 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform, opacity;
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 400ms cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform, opacity;
+}
+
+.animate-backdrop-fade {
+  animation: backdrop-fade-in 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: opacity;
+}
+
+/* Page Transition Classes */
+.page-transition {
+  animation: fade-in 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: opacity;
+}
+
+.bottom-sheet-transition {
+  transition: transform 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
+}
+
+/* Remove will-change after animation completes to free resources */
+.animate-slide-up,
+.animate-fade-in,
+.animate-slide-down,
+.animate-fade-in-up,
+.animate-backdrop-fade,
+.page-transition {
+  animation-fill-mode: forwards;
+}
+
+/* Reduced Motion Support - Respects user preferences */
+@media (prefers-reduced-motion: reduce) {
+  /* Disable decorative animations but keep functional transitions */
+  *,
+  *::before,
+  *::after {
+    /* Reduce animation duration to near-instant */
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    
+    /* Keep transitions but make them very fast for state changes */
+    transition-duration: 0.01ms !important;
+    
+    /* Remove will-change to prevent unnecessary GPU usage */
+    will-change: auto !important;
+  }
+  
+  /* Disable infinite animations completely */
+  .animate-spin,
+  .animate-pulse,
+  .animate-bounce {
+    animation: none !important;
+  }
+  
+  /* Keep opacity changes for visibility but remove transforms */
+  .animate-slide-up,
+  .animate-slide-down,
+  .animate-fade-in-up {
+    animation: reduced-fade-in 0.01ms !important;
+  }
+  
+  .animate-fade-in,
+  .animate-backdrop-fade {
+    animation: reduced-fade-in 0.01ms !important;
+  }
+  
+  /* Disable touch feedback scale animation */
+  .touch-feedback:active {
+    transform: none !important;
+  }
+  
+  /* Disable hover transforms */
+  *:hover {
+    transform: none !important;
+  }
+  
+  /* Keep scroll behavior smooth for accessibility */
+  .scroll-smooth-mobile {
+    scroll-behavior: auto;
+  }
+  
+  /* Simplified fade for reduced motion */
+  @keyframes reduced-fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+}
