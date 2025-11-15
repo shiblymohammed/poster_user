@@ -1,6 +1,19 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { ArrowLeft, User } from 'lucide-react';
+import Cropper from 'react-easy-crop';
+
+interface Point {
+  x: number;
+  y: number;
+}
+
+interface Area {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
 
 interface LocationState {
   selectedPoster: {
@@ -20,13 +33,72 @@ interface LocationState {
   slug: string;
 }
 
+// Utility function to create a cropped image
+const getCroppedImage = async (
+  imageSrc: string,
+  croppedAreaPixels: Area
+): Promise<Blob> => {
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+    image.src = imageSrc;
+    
+    image.onload = () => {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      
+      if (!ctx) {
+        reject(new Error('Failed to get canvas context'));
+        return;
+      }
+      
+      canvas.width = croppedAreaPixels.width;
+      canvas.height = croppedAreaPixels.height;
+      
+      ctx.drawImage(
+        image,
+        croppedAreaPixels.x,
+        croppedAreaPixels.y,
+        croppedAreaPixels.width,
+        croppedAreaPixels.height,
+        0,
+        0,
+        croppedAreaPixels.width,
+        croppedAreaPixels.height
+      );
+      
+      canvas.toBlob(
+        (blob) => {
+          if (blob) {
+            resolve(blob);
+          } else {
+            reject(new Error('Failed to create blob'));
+          }
+        },
+        'image/jpeg',
+        0.95
+      );
+    };
+    
+    image.onerror = () => {
+      reject(new Error('Failed to load image'));
+    };
+  });
+};
+
 function ProfileUploadPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const state = location.state as LocationState;
   
-  const [profilePreview, setProfilePreview] = useState<string | null>(null);
-  const [profileFile, setProfileFile] = useState<File | null>(null);
+  const [uploadedImage, setUploadedImage] = useState<string | null>(null);
+  const [showCropper, setShowCropper] = useState(false);
+  const [croppedPreview, setCroppedPreview] = useState<string | null>(null);
+  
+  // Cropper state
+  const [crop, setCrop] = useState<Point>({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
+  const [isCropping, setIsCropping] = useState(false);
 
   if (!state?.selectedPoster || !state?.selectedFrame) {
     navigate('/');
@@ -36,21 +108,68 @@ function ProfileUploadPage() {
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      setProfileFile(file);
       const reader = new FileReader();
       reader.onloadend = () => {
-        setProfilePreview(reader.result as string);
+        setUploadedImage(reader.result as string);
+        setShowCropper(true);
+        setCroppedPreview(null);
       };
       reader.readAsDataURL(file);
     }
   };
 
+  const onCropChange = useCallback((location: Point) => {
+    setCrop(location);
+  }, []);
+
+  const onZoomChange = useCallback((zoom: number) => {
+    setZoom(zoom);
+  }, []);
+
+  const onCropComplete = useCallback(
+    (_croppedArea: Area, croppedAreaPixels: Area) => {
+      setCroppedAreaPixels(croppedAreaPixels);
+    },
+    []
+  );
+
+  const handleCropConfirm = async () => {
+    if (!uploadedImage || !croppedAreaPixels) return;
+
+    setIsCropping(true);
+    try {
+      const croppedBlob = await getCroppedImage(uploadedImage, croppedAreaPixels);
+      
+      // Convert blob to base64 for preview and passing to next page
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64 = reader.result as string;
+        setCroppedPreview(base64);
+        setShowCropper(false);
+        setIsCropping(false);
+      };
+      reader.readAsDataURL(croppedBlob);
+    } catch (error) {
+      console.error('Error cropping image:', error);
+      alert('Failed to crop image. Please try again.');
+      setIsCropping(false);
+    }
+  };
+
+  const handleCropCancel = () => {
+    setShowCropper(false);
+    setUploadedImage(null);
+    setCroppedPreview(null);
+    setCrop({ x: 0, y: 0 });
+    setZoom(1);
+  };
+
   const handleContinue = () => {
-    if (profileFile && profilePreview) {
+    if (croppedPreview) {
       navigate(`/${state.slug}/edit`, {
         state: {
           ...state,
-          profileData: profilePreview,
+          profileData: croppedPreview,
         }
       });
     }
@@ -114,7 +233,7 @@ function ProfileUploadPage() {
 
         {/* Upload Area */}
         <div className="mb-8">
-          {!profilePreview ? (
+          {!uploadedImage && !croppedPreview ? (
             <label className="block">
               <input
                 type="file"
@@ -134,35 +253,98 @@ function ProfileUploadPage() {
                 </p>
               </div>
             </label>
-          ) : (
+          ) : showCropper && uploadedImage ? (
+            <div className="space-y-4">
+              <div className="bg-gray-50 rounded-lg p-4">
+                <h3 className="text-lg font-semibold font-body text-gray-900 mb-4 text-center">
+                  Crop Your Photo
+                </h3>
+                
+                {/* Cropper */}
+                <div className="relative w-full h-96 bg-black rounded-lg overflow-hidden">
+                  <Cropper
+                    image={uploadedImage}
+                    crop={crop}
+                    zoom={zoom}
+                    aspect={1}
+                    cropShape="round"
+                    showGrid={false}
+                    onCropChange={onCropChange}
+                    onZoomChange={onZoomChange}
+                    onCropComplete={onCropComplete}
+                  />
+                </div>
+
+                {/* Zoom Control */}
+                <div className="mt-4">
+                  <label className="block text-sm font-body font-semibold text-gray-700 mb-2">
+                    Zoom: {Math.round(zoom * 100)}%
+                  </label>
+                  <input
+                    type="range"
+                    min={1}
+                    max={3}
+                    step={0.1}
+                    value={zoom}
+                    onChange={(e) => setZoom(Number(e.target.value))}
+                    className="w-full"
+                    disabled={isCropping}
+                  />
+                </div>
+
+                {/* Instructions */}
+                <p className="text-sm text-gray-600 font-body text-center mt-4">
+                  💡 Drag to reposition, use slider to zoom
+                </p>
+
+                {/* Buttons */}
+                <div className="flex gap-3 mt-6">
+                  <button
+                    onClick={handleCropCancel}
+                    disabled={isCropping}
+                    className="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-body disabled:opacity-50"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleCropConfirm}
+                    disabled={isCropping}
+                    className="flex-1 px-4 py-3 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors font-body disabled:opacity-50"
+                  >
+                    {isCropping ? 'Cropping...' : 'Crop Photo'}
+                  </button>
+                </div>
+              </div>
+            </div>
+          ) : croppedPreview ? (
             <div className="space-y-4">
               <div className="flex justify-center">
                 <div className="relative w-64 h-64 rounded-full overflow-hidden border-4 border-gray-200">
                   <img
-                    src={profilePreview}
+                    src={croppedPreview}
                     alt="Profile preview"
                     className="w-full h-full object-cover"
                   />
                 </div>
               </div>
               <p className="text-center text-sm text-gray-600 font-body">
-                Preview: Your photo will appear as a circle
+                ✅ Preview: Your photo will appear as a circle
               </p>
               <button
                 onClick={() => {
-                  setProfilePreview(null);
-                  setProfileFile(null);
+                  setUploadedImage(null);
+                  setCroppedPreview(null);
                 }}
                 className="w-full px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-body"
               >
                 Choose Different Photo
               </button>
             </div>
-          )}
+          ) : null}
         </div>
 
         {/* Continue Button */}
-        {profilePreview && (
+        {croppedPreview && (
           <button
             onClick={handleContinue}
             className="w-full px-6 py-4 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors font-body text-lg font-semibold"
