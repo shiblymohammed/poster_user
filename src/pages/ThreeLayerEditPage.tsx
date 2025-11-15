@@ -30,8 +30,8 @@ function ThreeLayerEditPage() {
   const containerRef = useRef<HTMLDivElement>(null);
   
   const [profilePosition, setProfilePosition] = useState({
-    x: 540,
-    y: 540,
+    x: 540, // Will be updated when poster loads
+    y: 540, // Will be updated when poster loads
     scale: 1.0,
     rotation: 0
   });
@@ -69,6 +69,13 @@ function ThreeLayerEditPage() {
       setPosterImg(poster);
       setProfileImg(profile);
       setFrameImg(frame);
+      
+      // Center profile based on actual poster dimensions
+      setProfilePosition(prev => ({
+        ...prev,
+        x: poster.width / 2,
+        y: poster.height / 2
+      }));
     }).catch(err => {
       console.error('Error loading images:', err);
     });
@@ -82,20 +89,38 @@ function ThreeLayerEditPage() {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    const size = 600; // Canvas display size
-    canvas.width = size;
-    canvas.height = size;
+    // Calculate canvas size based on poster aspect ratio
+    const maxSize = 600; // Maximum canvas dimension
+    const posterAspectRatio = posterImg.width / posterImg.height;
+    
+    let canvasWidth, canvasHeight;
+    if (posterAspectRatio > 1) {
+      // Landscape: width is larger
+      canvasWidth = maxSize;
+      canvasHeight = maxSize / posterAspectRatio;
+    } else if (posterAspectRatio < 1) {
+      // Portrait: height is larger
+      canvasHeight = maxSize;
+      canvasWidth = maxSize * posterAspectRatio;
+    } else {
+      // Square
+      canvasWidth = maxSize;
+      canvasHeight = maxSize;
+    }
+    
+    canvas.width = canvasWidth;
+    canvas.height = canvasHeight;
 
     // Clear canvas
-    ctx.clearRect(0, 0, size, size);
+    ctx.clearRect(0, 0, canvasWidth, canvasHeight);
 
-    // Draw poster background
-    ctx.drawImage(posterImg, 0, 0, size, size);
+    // Draw poster background (maintains aspect ratio)
+    ctx.drawImage(posterImg, 0, 0, canvasWidth, canvasHeight);
 
     // Draw circular profile photo
-    const profileSize = (size * 0.3) * profilePosition.scale;
-    const profileX = (profilePosition.x / 1080) * size;
-    const profileY = (profilePosition.y / 1080) * size;
+    const profileSize = (Math.min(canvasWidth, canvasHeight) * 0.3) * profilePosition.scale;
+    const profileX = (profilePosition.x / posterImg.width) * canvasWidth;
+    const profileY = (profilePosition.y / posterImg.height) * canvasHeight;
 
     ctx.save();
     ctx.translate(profileX, profileY);
@@ -125,8 +150,8 @@ function ThreeLayerEditPage() {
     ctx.lineWidth = 2;
     ctx.stroke();
 
-    // Draw frame overlay
-    ctx.drawImage(frameImg, 0, 0, size, size);
+    // Draw frame overlay (maintains aspect ratio)
+    ctx.drawImage(frameImg, 0, 0, canvasWidth, canvasHeight);
 
   }, [posterImg, profileImg, frameImg, profilePosition]);
 
@@ -144,7 +169,7 @@ function ThreeLayerEditPage() {
   };
 
   const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    if (!isDragging || !canvasRef.current) return;
+    if (!isDragging || !canvasRef.current || !posterImg) return;
 
     const canvas = canvasRef.current;
     const rect = canvas.getBoundingClientRect();
@@ -154,12 +179,14 @@ function ThreeLayerEditPage() {
     const deltaX = x - dragStart.x;
     const deltaY = y - dragStart.y;
 
-    const scale = 1080 / canvas.width;
+    // Scale based on actual poster dimensions, not hardcoded 1080
+    const scaleX = posterImg.width / canvas.width;
+    const scaleY = posterImg.height / canvas.height;
 
     setProfilePosition(prev => ({
       ...prev,
-      x: Math.max(0, Math.min(1080, prev.x + deltaX * scale)),
-      y: Math.max(0, Math.min(1080, prev.y + deltaY * scale))
+      x: Math.max(0, Math.min(posterImg.width, prev.x + deltaX * scaleX)),
+      y: Math.max(0, Math.min(posterImg.height, prev.y + deltaY * scaleY))
     }));
 
     setDragStart({ x, y });
@@ -184,7 +211,7 @@ function ThreeLayerEditPage() {
   };
 
   const handleTouchMove = (e: React.TouchEvent<HTMLCanvasElement>) => {
-    if (!isDragging || !canvasRef.current) return;
+    if (!isDragging || !canvasRef.current || !posterImg) return;
 
     const canvas = canvasRef.current;
     const rect = canvas.getBoundingClientRect();
@@ -195,12 +222,14 @@ function ThreeLayerEditPage() {
     const deltaX = x - dragStart.x;
     const deltaY = y - dragStart.y;
 
-    const scale = 1080 / canvas.width;
+    // Scale based on actual poster dimensions, not hardcoded 1080
+    const scaleX = posterImg.width / canvas.width;
+    const scaleY = posterImg.height / canvas.height;
 
     setProfilePosition(prev => ({
       ...prev,
-      x: Math.max(0, Math.min(1080, prev.x + deltaX * scale)),
-      y: Math.max(0, Math.min(1080, prev.y + deltaY * scale))
+      x: Math.max(0, Math.min(posterImg.width, prev.x + deltaX * scaleX)),
+      y: Math.max(0, Math.min(posterImg.height, prev.y + deltaY * scaleY))
     }));
 
     setDragStart({ x, y });
@@ -228,12 +257,14 @@ function ThreeLayerEditPage() {
 
   // Reset
   const handleReset = () => {
-    setProfilePosition({
-      x: 540,
-      y: 540,
-      scale: 1.0,
-      rotation: 0
-    });
+    if (posterImg) {
+      setProfilePosition({
+        x: posterImg.width / 2,
+        y: posterImg.height / 2,
+        scale: 1.0,
+        rotation: 0
+      });
+    }
   };
 
   // Generate poster
