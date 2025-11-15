@@ -3,17 +3,26 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, Check } from 'lucide-react';
 import axiosInstance from '../api/axios';
 
+interface Poster {
+  id: number;
+  name: string;
+  poster_url: string;
+  is_default: boolean;
+}
+
 interface Frame {
   id: number;
   name: string;
   frame_url: string;
+  is_default: boolean;
 }
 
 interface Campaign {
   id: number;
   name: string;
   code: string;
-  description: string;
+  description?: string;
+  posters: Poster[];
   frames: Frame[];
 }
 
@@ -22,6 +31,7 @@ function CampaignPage() {
   const navigate = useNavigate();
   const [campaign, setCampaign] = useState<Campaign | null>(null);
   const [loading, setLoading] = useState(true);
+  const [selectedPoster, setSelectedPoster] = useState<Poster | null>(null);
   const [selectedFrame, setSelectedFrame] = useState<Frame | null>(null);
 
   useEffect(() => {
@@ -34,7 +44,15 @@ function CampaignPage() {
       console.log('Fetching campaign from:', `/api/campaigns/${slug}/`);
       const response = await axiosInstance.get(`/api/campaigns/${slug}/`);
       console.log('Campaign data received:', response.data);
-      setCampaign(response.data);
+      
+      // Ensure posters and frames arrays exist
+      const campaignData = {
+        ...response.data,
+        posters: response.data.posters || [],
+        frames: response.data.frames || []
+      };
+      
+      setCampaign(campaignData);
     } catch (error: any) {
       console.error('Error fetching campaign:', error);
       console.error('Error response:', error.response?.data);
@@ -73,9 +91,10 @@ function CampaignPage() {
   };
 
   const handleContinue = () => {
-    if (selectedFrame && campaign) {
-      navigate(`/${slug}/upload`, {
+    if (selectedPoster && selectedFrame && campaign) {
+      navigate(`/${slug}/profile-upload`, {
         state: {
+          selectedPoster,
           selectedFrame,
           campaign: { name: campaign.name, code: campaign.code },
           slug
@@ -137,50 +156,114 @@ function CampaignPage() {
           )}
         </div>
 
-        <div className="mb-6 text-center">
-          <p className="text-sm text-gray-600 font-body">
-            Select a frame to continue
-          </p>
-        </div>
+        {/* Posters Section */}
+        {campaign.posters && campaign.posters.length > 0 && (
+          <div className="mb-12">
+            <div className="mb-6">
+              <h2 className="text-2xl font-display text-gray-900 mb-2">Select a Poster Background</h2>
+              <p className="text-sm text-gray-600 font-body">
+                Choose the background for your poster
+              </p>
+            </div>
 
-        {/* Frames Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 mb-8">
-          {campaign.frames.map((frame) => (
-            <button
-              key={frame.id}
-              onClick={() => setSelectedFrame(frame)}
-              className={`relative aspect-square rounded-lg overflow-hidden transition-all ${
-                selectedFrame?.id === frame.id
-                  ? 'ring-4 ring-primary shadow-lg scale-105'
-                  : 'border-2 border-gray-200 hover:border-gray-300 hover:shadow-md'
-              }`}
-            >
-              <img
-                src={frame.frame_url}
-                alt={frame.name}
-                className="w-full h-full object-cover"
-              />
-              {selectedFrame?.id === frame.id && (
-                <div className="absolute top-2 right-2 w-8 h-8 bg-primary rounded-full flex items-center justify-center">
-                  <Check className="w-5 h-5 text-white" />
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+              {campaign.posters.map((poster) => (
+              <button
+                key={poster.id}
+                onClick={() => setSelectedPoster(poster)}
+                className={`relative aspect-square rounded-lg overflow-hidden transition-all ${
+                  selectedPoster?.id === poster.id
+                    ? 'ring-4 ring-primary shadow-lg scale-105'
+                    : 'border-2 border-gray-200 hover:border-gray-300 hover:shadow-md'
+                }`}
+              >
+                <img
+                  src={poster.poster_url}
+                  alt={poster.name}
+                  className="w-full h-full object-cover"
+                />
+                {selectedPoster?.id === poster.id && (
+                  <div className="absolute top-2 right-2 w-8 h-8 bg-primary rounded-full flex items-center justify-center">
+                    <Check className="w-5 h-5 text-white" />
+                  </div>
+                )}
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-3">
+                  <p className="text-white text-sm font-body font-semibold">{poster.name}</p>
                 </div>
-              )}
-              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-3">
-                <p className="text-white text-sm font-body font-semibold">{frame.name}</p>
-              </div>
-            </button>
-          ))}
+              </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Frames Section */}
+        <div className="mb-8">
+          <div className="mb-6">
+            <h2 className="text-2xl font-display text-gray-900 mb-2">Select a Frame</h2>
+            <p className="text-sm text-gray-600 font-body">
+              Choose the frame overlay for your poster
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+            {campaign.frames.map((frame) => (
+              <button
+                key={frame.id}
+                onClick={() => setSelectedFrame(frame)}
+                className={`relative aspect-square rounded-lg overflow-hidden transition-all ${
+                  selectedFrame?.id === frame.id
+                    ? 'ring-4 ring-primary shadow-lg scale-105'
+                    : 'border-2 border-gray-200 hover:border-gray-300 hover:shadow-md'
+                }`}
+              >
+                <img
+                  src={frame.frame_url}
+                  alt={frame.name}
+                  className="w-full h-full object-cover bg-gray-100"
+                />
+                {selectedFrame?.id === frame.id && (
+                  <div className="absolute top-2 right-2 w-8 h-8 bg-primary rounded-full flex items-center justify-center">
+                    <Check className="w-5 h-5 text-white" />
+                  </div>
+                )}
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-3">
+                  <p className="text-white text-sm font-body font-semibold">{frame.name}</p>
+                </div>
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Continue Button */}
-        {selectedFrame && (
-          <div className="max-w-md mx-auto">
-            <button
-              onClick={handleContinue}
-              className="w-full px-6 py-4 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors font-body text-lg font-semibold"
-            >
-              Continue with {selectedFrame.name}
-            </button>
+        {campaign.posters && campaign.posters.length > 0 ? (
+          <>
+            {selectedPoster && selectedFrame && (
+              <div className="max-w-md mx-auto">
+                <button
+                  onClick={handleContinue}
+                  className="w-full px-6 py-4 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors font-body text-lg font-semibold"
+                >
+                  Continue
+                </button>
+              </div>
+            )}
+
+            {/* Selection Status */}
+            {(!selectedPoster || !selectedFrame) && (
+              <div className="max-w-md mx-auto text-center p-4 bg-blue-50 rounded-lg">
+                <p className="text-sm text-blue-900 font-body">
+                  {!selectedPoster && !selectedFrame && 'Please select a poster and a frame to continue'}
+                  {selectedPoster && !selectedFrame && 'Great! Now select a frame'}
+                  {!selectedPoster && selectedFrame && 'Great! Now select a poster'}
+                </p>
+              </div>
+            )}
+          </>
+        ) : (
+          <div className="max-w-md mx-auto text-center p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+            <p className="text-sm text-yellow-900 font-body">
+              This campaign doesn't have poster backgrounds yet. Please contact the administrator.
+            </p>
           </div>
         )}
       </main>

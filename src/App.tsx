@@ -1,10 +1,9 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
 import CampaignPage from './pages/CampaignPage';
-import UploadPage from './pages/UploadPage';
-import PreviewPage from './pages/PreviewPage';
+import ProfileUploadPage from './pages/ProfileUploadPage';
+import ThreeLayerEditPage from './pages/ThreeLayerEditPage';
 import ResultPage from './pages/ResultPage';
-import EditPage from './pages/EditPage';
 import ThemeTest from './components/ThemeTest';
 
 function App() {
@@ -15,10 +14,9 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/theme-test" element={<ThemeTest />} />
           <Route path="/:slug" element={<CampaignPage />} />
-          <Route path="/:slug/upload" element={<UploadPage />} />
-          <Route path="/:slug/preview" element={<PreviewPage />} />
+          <Route path="/:slug/profile-upload" element={<ProfileUploadPage />} />
+          <Route path="/:slug/edit" element={<ThreeLayerEditPage />} />
           <Route path="/:slug/result" element={<ResultPage />} />
-          <Route path="/:slug/edit" element={<EditPage />} />
         </Routes>
       </Router>
     </div>
