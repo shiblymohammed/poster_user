@@ -70,13 +70,18 @@ function CampaignPage() {
         name: campaignName,
         code: slug || 'election-2024',
         description: `Create stunning campaign posters for ${campaignName}`,
+        posters: [
+          { id: 1, name: 'Poster 1', poster_url: 'https://via.placeholder.com/400x400/3b82f6/ffffff?text=Poster+1', is_default: true },
+          { id: 2, name: 'Poster 2', poster_url: 'https://via.placeholder.com/400x400/8b5cf6/ffffff?text=Poster+2', is_default: false },
+          { id: 3, name: 'Poster 3', poster_url: 'https://via.placeholder.com/400x400/06b6d4/ffffff?text=Poster+3', is_default: false }
+        ],
         frames: [
-          { id: 1, name: 'Victory Frame', frame_url: 'https://via.placeholder.com/400x400/3b82f6/ffffff?text=Victory' },
-          { id: 2, name: 'Unity Frame', frame_url: 'https://via.placeholder.com/400x400/8b5cf6/ffffff?text=Unity' },
-          { id: 3, name: 'Progress Frame', frame_url: 'https://via.placeholder.com/400x400/06b6d4/ffffff?text=Progress' },
-          { id: 4, name: 'Hope Frame', frame_url: 'https://via.placeholder.com/400x400/10b981/ffffff?text=Hope' },
-          { id: 5, name: 'Change Frame', frame_url: 'https://via.placeholder.com/400x400/ec4899/ffffff?text=Change' },
-          { id: 6, name: 'Future Frame', frame_url: 'https://via.placeholder.com/400x400/f97316/ffffff?text=Future' }
+          { id: 1, name: 'Victory Frame', frame_url: 'https://via.placeholder.com/400x400/3b82f6/ffffff?text=Victory', is_default: true },
+          { id: 2, name: 'Unity Frame', frame_url: 'https://via.placeholder.com/400x400/8b5cf6/ffffff?text=Unity', is_default: false },
+          { id: 3, name: 'Progress Frame', frame_url: 'https://via.placeholder.com/400x400/06b6d4/ffffff?text=Progress', is_default: false },
+          { id: 4, name: 'Hope Frame', frame_url: 'https://via.placeholder.com/400x400/10b981/ffffff?text=Hope', is_default: false },
+          { id: 5, name: 'Change Frame', frame_url: 'https://via.placeholder.com/400x400/ec4899/ffffff?text=Change', is_default: false },
+          { id: 6, name: 'Future Frame', frame_url: 'https://via.placeholder.com/400x400/f97316/ffffff?text=Future', is_default: false }
         ]
       };
       setCampaign(mockCampaign);
