@@ -40,6 +40,27 @@ function CampaignPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug]);
 
+  // Auto-navigate to profile upload when campaign loads
+  useEffect(() => {
+    if (campaign && campaign.posters.length > 0 && campaign.frames.length > 0) {
+      const poster = campaign.posters[0];
+      const frame = campaign.frames[0];
+      
+      // Navigate directly to profile upload with preselected poster and frame
+      navigate(`/${slug}/profile-upload`, {
+        state: {
+          selectedPoster: poster,
+          selectedFrame: frame,
+          campaign: {
+            name: campaign.name,
+            code: campaign.code
+          },
+          slug
+        }
+      });
+    }
+  }, [campaign, slug, navigate]);
+
   const fetchCampaign = async () => {
     try {
       console.log('Fetching campaign from:', `/api/campaigns/${slug}/`);
