@@ -536,7 +536,14 @@ function ThreeLayerEditPage() {
           disabled={isGenerating}
           className="w-full px-6 py-4 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors font-body text-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {isGenerating ? 'Generating Poster...' : 'Generate Poster'}
+          {isGenerating ? (
+            <div className="flex items-center justify-center gap-2">
+              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+              <span>Generating Poster... (may take 30-60s)</span>
+            </div>
+          ) : (
+            'Generate Poster'
+          )}
         </button>
 
         {/* Instructions */}
