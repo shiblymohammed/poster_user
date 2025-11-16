@@ -33,6 +33,7 @@ function CampaignPage() {
   const [loading, setLoading] = useState(true);
   const [selectedPoster, setSelectedPoster] = useState<Poster | null>(null);
   const [selectedFrame, setSelectedFrame] = useState<Frame | null>(null);
+  const [customPoster, setCustomPoster] = useState<{ file: File; preview: string } | null>(null);
 
   useEffect(() => {
     fetchCampaign();
@@ -95,11 +96,37 @@ function CampaignPage() {
     }
   };
 
+  const handleCustomPosterUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file && file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setCustomPoster({
+          file,
+          preview: reader.result as string
+        });
+        // Create a custom poster object
+        setSelectedPoster({
+          id: -1, // Special ID for custom poster
+          name: 'Your Custom Poster',
+          poster_url: reader.result as string,
+          is_default: false
+        });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleContinue = () => {
-    if (selectedPoster && selectedFrame && campaign) {
+    if ((selectedPoster || customPoster) && selectedFrame && campaign) {
       navigate(`/${slug}/profile-upload`, {
         state: {
-          selectedPoster,
+          selectedPoster: selectedPoster || {
+            id: -1,
+            name: 'Your Custom Poster',
+            poster_url: customPoster!.preview,
+            is_default: false
+          },
           selectedFrame,
           campaign: { name: campaign.name, code: campaign.code },
           slug
@@ -172,12 +199,55 @@ function CampaignPage() {
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+              {/* Custom Poster Upload Option */}
+              <label className={`relative aspect-square rounded-lg overflow-hidden transition-all cursor-pointer ${
+                customPoster
+                  ? 'ring-4 ring-primary shadow-lg scale-105'
+                  : 'border-2 border-dashed border-gray-300 hover:border-primary hover:bg-gray-50'
+              }`}>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleCustomPosterUpload}
+                  className="hidden"
+                />
+                {customPoster ? (
+                  <>
+                    <img
+                      src={customPoster.preview}
+                      alt="Your custom poster"
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute top-2 right-2 w-8 h-8 bg-primary rounded-full flex items-center justify-center">
+                      <Check className="w-5 h-5 text-white" />
+                    </div>
+                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-3">
+                      <p className="text-white text-sm font-body font-semibold">Your Custom Poster</p>
+                    </div>
+                  </>
+                ) : (
+                  <div className="w-full h-full flex flex-col items-center justify-center p-4 text-center">
+                    <div className="w-12 h-12 mb-2 rounded-full bg-gray-100 flex items-center justify-center">
+                      <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                      </svg>
+                    </div>
+                    <p className="text-sm font-body font-semibold text-gray-700">Upload Your Own</p>
+                    <p className="text-xs text-gray-500 mt-1">Click to choose</p>
+                  </div>
+                )}
+              </label>
+
+              {/* Admin-uploaded posters */}
               {campaign.posters.map((poster) => (
               <button
                 key={poster.id}
-                onClick={() => setSelectedPoster(poster)}
+                onClick={() => {
+                  setSelectedPoster(poster);
+                  setCustomPoster(null); // Clear custom poster when selecting admin poster
+                }}
                 className={`relative aspect-square rounded-lg overflow-hidden transition-all ${
-                  selectedPoster?.id === poster.id
+                  selectedPoster?.id === poster.id && !customPoster
                     ? 'ring-4 ring-primary shadow-lg scale-105'
                     : 'border-2 border-gray-200 hover:border-gray-300 hover:shadow-md'
                 }`}
@@ -187,7 +257,7 @@ function CampaignPage() {
                   alt={poster.name}
                   className="w-full h-full object-cover"
                 />
-                {selectedPoster?.id === poster.id && (
+                {selectedPoster?.id === poster.id && !customPoster && (
                   <div className="absolute top-2 right-2 w-8 h-8 bg-primary rounded-full flex items-center justify-center">
                     <Check className="w-5 h-5 text-white" />
                   </div>
@@ -242,7 +312,7 @@ function CampaignPage() {
         {/* Continue Button */}
         {campaign.posters && campaign.posters.length > 0 ? (
           <>
-            {selectedPoster && selectedFrame && (
+            {(selectedPoster || customPoster) && selectedFrame && (
               <div className="max-w-md mx-auto">
                 <button
                   onClick={handleContinue}
@@ -254,12 +324,12 @@ function CampaignPage() {
             )}
 
             {/* Selection Status */}
-            {(!selectedPoster || !selectedFrame) && (
+            {((!selectedPoster && !customPoster) || !selectedFrame) && (
               <div className="max-w-md mx-auto text-center p-4 bg-blue-50 rounded-lg">
                 <p className="text-sm text-blue-900 font-body">
-                  {!selectedPoster && !selectedFrame && 'Please select a poster and a frame to continue'}
-                  {selectedPoster && !selectedFrame && 'Great! Now select a frame'}
-                  {!selectedPoster && selectedFrame && 'Great! Now select a poster'}
+                  {!selectedPoster && !customPoster && !selectedFrame && 'Please select or upload a poster and select a frame to continue'}
+                  {(selectedPoster || customPoster) && !selectedFrame && 'Great! Now select a frame'}
+                  {!selectedPoster && !customPoster && selectedFrame && 'Great! Now select or upload a poster'}
                 </p>
               </div>
             )}

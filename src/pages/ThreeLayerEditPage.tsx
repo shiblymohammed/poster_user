@@ -36,6 +36,7 @@ function ThreeLayerEditPage() {
     rotation: 0
   });
   
+  const [cropShape, setCropShape] = useState<'circle' | 'square' | 'rectangle'>('circle');
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [isGenerating, setIsGenerating] = useState(false);
@@ -117,8 +118,8 @@ function ThreeLayerEditPage() {
     // Draw poster background (maintains aspect ratio)
     ctx.drawImage(posterImg, 0, 0, canvasWidth, canvasHeight);
 
-    // Draw circular profile photo
-    const profileSize = (Math.min(canvasWidth, canvasHeight) * 0.3) * profilePosition.scale;
+    // Draw profile photo with selected crop shape
+    const baseSize = Math.min(canvasWidth, canvasHeight) * 0.3;
     const profileX = (profilePosition.x / posterImg.width) * canvasWidth;
     const profileY = (profilePosition.y / posterImg.height) * canvasHeight;
 
@@ -126,34 +127,111 @@ function ThreeLayerEditPage() {
     ctx.translate(profileX, profileY);
     ctx.rotate((profilePosition.rotation * Math.PI) / 180);
 
-    // Create circular clip
-    ctx.beginPath();
-    ctx.arc(0, 0, profileSize / 2, 0, Math.PI * 2);
-    ctx.closePath();
-    ctx.clip();
+    // Helper function to draw rounded rectangle
+    const roundRect = (x: number, y: number, width: number, height: number, radius: number) => {
+      ctx.beginPath();
+      ctx.moveTo(x + radius, y);
+      ctx.lineTo(x + width - radius, y);
+      ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+      ctx.lineTo(x + width, y + height - radius);
+      ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+      ctx.lineTo(x + radius, y + height);
+      ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+      ctx.lineTo(x, y + radius);
+      ctx.quadraticCurveTo(x, y, x + radius, y);
+      ctx.closePath();
+    };
 
-    // Draw profile image
-    ctx.drawImage(
-      profileImg,
-      -profileSize / 2,
-      -profileSize / 2,
-      profileSize,
-      profileSize
-    );
+    // Helper function to draw image with cover fit (no stretching)
+    const drawImageCover = (img: HTMLImageElement, targetWidth: number, targetHeight: number) => {
+      const imgAspect = img.width / img.height;
+      const targetAspect = targetWidth / targetHeight;
+      
+      let drawWidth, drawHeight, offsetX, offsetY;
+      
+      if (imgAspect > targetAspect) {
+        // Image is wider - fit to height and crop width
+        drawHeight = targetHeight;
+        drawWidth = img.width * (targetHeight / img.height);
+        offsetX = -(drawWidth - targetWidth) / 2;
+        offsetY = 0;
+      } else {
+        // Image is taller - fit to width and crop height
+        drawWidth = targetWidth;
+        drawHeight = img.height * (targetWidth / img.width);
+        offsetX = 0;
+        offsetY = -(drawHeight - targetHeight) / 2;
+      }
+      
+      ctx.drawImage(
+        img,
+        -targetWidth / 2 + offsetX,
+        -targetHeight / 2 + offsetY,
+        drawWidth,
+        drawHeight
+      );
+    };
+
+    // Create clip path based on crop shape
+    if (cropShape === 'circle') {
+      const profileSize = baseSize * profilePosition.scale;
+      ctx.beginPath();
+      ctx.arc(0, 0, profileSize / 2, 0, Math.PI * 2);
+      ctx.closePath();
+      ctx.clip();
+      
+      // Draw profile image with cover fit
+      drawImageCover(profileImg, profileSize, profileSize);
+    } else if (cropShape === 'square') {
+      const profileSize = baseSize * profilePosition.scale;
+      const radius = profileSize * 0.1; // 10% rounded corners
+      roundRect(-profileSize / 2, -profileSize / 2, profileSize, profileSize, radius);
+      ctx.clip();
+      
+      // Draw profile image with cover fit
+      drawImageCover(profileImg, profileSize, profileSize);
+    } else if (cropShape === 'rectangle') {
+      // Portrait rectangle (taller than wide) - reduced height
+      const profileWidth = baseSize * profilePosition.scale;
+      const profileHeight = baseSize * profilePosition.scale * 1.3;
+      const radius = profileWidth * 0.1; // 10% rounded corners
+      roundRect(-profileWidth / 2, -profileHeight / 2, profileWidth, profileHeight, radius);
+      ctx.clip();
+      
+      // Draw profile image with cover fit
+      drawImageCover(profileImg, profileWidth, profileHeight);
+    }
 
     ctx.restore();
 
-    // Draw circle outline for visibility
-    ctx.beginPath();
-    ctx.arc(profileX, profileY, profileSize / 2, 0, Math.PI * 2);
+    // Draw outline for visibility
+    ctx.save();
+    ctx.translate(profileX, profileY);
+    ctx.rotate((profilePosition.rotation * Math.PI) / 180);
+    
+    if (cropShape === 'circle') {
+      const profileSize = baseSize * profilePosition.scale;
+      ctx.beginPath();
+      ctx.arc(0, 0, profileSize / 2, 0, Math.PI * 2);
+    } else if (cropShape === 'square') {
+      const profileSize = baseSize * profilePosition.scale;
+      const radius = profileSize * 0.1;
+      roundRect(-profileSize / 2, -profileSize / 2, profileSize, profileSize, radius);
+    } else if (cropShape === 'rectangle') {
+      const profileWidth = baseSize * profilePosition.scale;
+      const profileHeight = baseSize * profilePosition.scale * 1.3;
+      const radius = profileWidth * 0.1;
+      roundRect(-profileWidth / 2, -profileHeight / 2, profileWidth, profileHeight, radius);
+    }
     ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
     ctx.lineWidth = 2;
     ctx.stroke();
+    ctx.restore();
 
     // Draw frame overlay (maintains aspect ratio)
     ctx.drawImage(frameImg, 0, 0, canvasWidth, canvasHeight);
 
-  }, [posterImg, profileImg, frameImg, profilePosition]);
+  }, [posterImg, profileImg, frameImg, profilePosition, cropShape]);
 
   // Mouse/Touch handlers
   const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
@@ -278,14 +356,17 @@ function ThreeLayerEditPage() {
         frame_id: state.selectedFrame.id,
         profile_data: state.profileData,
         profile_position: profilePosition,
+        crop_shape: cropShape,
         output_size: 'square_1080'
       });
 
       navigate(`/${state.slug}/result`, {
         state: {
           generatedImageUrl: response.data.generated_image_url,
-          campaign: state.campaign,
-          slug: state.slug
+          campaignName: state.campaign.name,
+          slug: state.slug,
+          selectedFrame: state.selectedFrame,
+          selectedSize: 'square_1080'
         }
       });
     } catch (error: any) {
@@ -350,6 +431,54 @@ function ThreeLayerEditPage() {
 
         {/* Controls */}
         <div className="space-y-4 mb-6">
+          {/* Crop Shape Selector */}
+          <div className="bg-gray-50 p-4 rounded-lg">
+            <label className="block text-sm font-body font-semibold text-gray-700 mb-3">
+              Crop Shape
+            </label>
+            <div className="grid grid-cols-3 gap-2">
+              <button
+                onClick={() => setCropShape('circle')}
+                className={`p-3 rounded-lg border-2 transition-all font-body text-sm ${
+                  cropShape === 'circle'
+                    ? 'border-primary bg-primary/10 text-primary font-semibold'
+                    : 'border-gray-300 bg-white hover:border-gray-400'
+                }`}
+              >
+                <div className="flex flex-col items-center gap-1">
+                  <div className="w-8 h-8 rounded-full border-2 border-current"></div>
+                  <span>Circle</span>
+                </div>
+              </button>
+              <button
+                onClick={() => setCropShape('square')}
+                className={`p-3 rounded-lg border-2 transition-all font-body text-sm ${
+                  cropShape === 'square'
+                    ? 'border-primary bg-primary/10 text-primary font-semibold'
+                    : 'border-gray-300 bg-white hover:border-gray-400'
+                }`}
+              >
+                <div className="flex flex-col items-center gap-1">
+                  <div className="w-8 h-8 border-2 border-current rounded"></div>
+                  <span>Square</span>
+                </div>
+              </button>
+              <button
+                onClick={() => setCropShape('rectangle')}
+                className={`p-3 rounded-lg border-2 transition-all font-body text-sm ${
+                  cropShape === 'rectangle'
+                    ? 'border-primary bg-primary/10 text-primary font-semibold'
+                    : 'border-gray-300 bg-white hover:border-gray-400'
+                }`}
+              >
+                <div className="flex flex-col items-center gap-1">
+                  <div className="w-6 h-10 border-2 border-current rounded"></div>
+                  <span>Portrait</span>
+                </div>
+              </button>
+            </div>
+          </div>
+
           {/* Zoom Control */}
           <div className="bg-gray-50 p-4 rounded-lg">
             <label className="block text-sm font-body font-semibold text-gray-700 mb-2">
