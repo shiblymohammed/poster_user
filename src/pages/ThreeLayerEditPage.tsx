@@ -228,8 +228,19 @@ function ThreeLayerEditPage() {
     ctx.stroke();
     ctx.restore();
 
-    // Draw frame overlay (maintains aspect ratio)
-    ctx.drawImage(frameImg, 0, 0, canvasWidth, canvasHeight);
+    // Draw frame overlay (matches backend: aspect-fit, bottom-aligned)
+    const scaleX = canvasWidth / frameImg.width;
+    const scaleY = canvasHeight / frameImg.height;
+    const scale = Math.min(scaleX, scaleY);
+    
+    const newFrameWidth = frameImg.width * scale;
+    const newFrameHeight = frameImg.height * scale;
+    
+    // Calculate position: horizontally centered, vertically bottom-aligned
+    const frameX = (canvasWidth - newFrameWidth) / 2;
+    const frameY = canvasHeight - newFrameHeight;
+
+    ctx.drawImage(frameImg, frameX, frameY, newFrameWidth, newFrameHeight);
 
   }, [posterImg, profileImg, frameImg, profilePosition, cropShape]);
 
