@@ -228,10 +228,9 @@ function ThreeLayerEditPage() {
     ctx.stroke();
     ctx.restore();
 
-    // Draw frame overlay (matches backend: aspect-fit, bottom-aligned)
-    const scaleX = canvasWidth / frameImg.width;
-    const scaleY = canvasHeight / frameImg.height;
-    const scale = Math.min(scaleX, scaleY);
+    // Draw frame overlay (matches backend: fill-width, bottom-aligned)
+    // Scale frame to match canvas width completely
+    const scale = canvasWidth / frameImg.width;
     
     const newFrameWidth = frameImg.width * scale;
     const newFrameHeight = frameImg.height * scale;
